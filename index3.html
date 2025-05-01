@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Attendance Management System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .logo {
+            height: 80px;
+            margin-right: 20px;
+        }
+        .college-name {
+            text-align: center;
+        }
+        .college-name h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #fff;
+        }
+        .college-name p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #ddd;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        select, input, button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .export-btn {
+            background-color: #27ae60;
+        }
+        .export-btn:hover {
+            background-color: #219653;
+        }
+        .edit-btn {
+            background-color: #f39c12;
+        }
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+        .submit-btn {
+            background-color: #9b59b6;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #8e44ad;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .attendance-options {
+            display: flex;
+            gap: 10px;
+        }
+        .attendance-options label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .attendance-options label:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        .attendance-options input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+        }
+        .attendance-options input[type="radio"]:checked {
+            border-color: currentColor;
+        }
+        .attendance-options input[type="radio"]:checked::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: currentColor;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .present-option {
+            color: #27ae60;
+        }
+        .absent-option {
+            color: #e74c3c;
+        }
+        .late-option {
+            color: #f39c12;
+        }
+        .halfday-option {
+            color: #3498db;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 8px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .save-btn {
+            background-color: #27ae60;
+            width: 100%;
+            padding: 10px;
+        }
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #eaf2f8;
+            border-radius: 5px;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <!-- Replace with actual logo image -->
+            <img src="C:\Users\Nandhini\Downloads\logo.jpg" alt="SUGUNA COLLEGE OF ENGINEERING Logo" class="logo">
+            <div class="college-name">
+                <h1>SUGUNA COLLEGE OF ENGINEERING</h1>
+                <p>(Approved by AICTE New Delhi, Affiliated to Anna University, Chennai)</p>
+                <p>Nehru Nagar (W), Kalapatti Road, Civil Aerodrome Post, Coimbatore – 641 014</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Attendance Management System</h1>
+        <h2> Department of CSE & IT</h2>
+        <div class="controls">
+            <div class="control-group">
+                <select id="class-select">
+                    <option value="II_CSE">II CSE</option>
+                    <option value="III_CSE">III CSE</option>
+                    <option value="II_IT">II IT</option>
+                    <option value="III_IT">III IT</option>
+                    <option value="IV_CSE">IV CSE</option>
+                </select>
+                <input type="date" id="date-input">
+                <button id="load-btn">Load Students</button>
+            </div>
+            <div class="control-group">
+                <button id="export-week-btn" class="export-btn">Export Weekly Report</button>
+                <button id="export-semester-btn" class="export-btn">Export Semester Report</button>
+                <button id="edit-students-btn" class="edit-btn">Edit Students</button>
+            </div>
+        </div>
+        
+        <table id="attendance-table">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Student Name</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody id="student-list">
+                <!-- Students will be loaded here -->
+            </tbody>
+        </table>
+        
+        <div style="text-align: center;">
+            <button id="submit-btn" class="submit-btn">Submit Attendance</button>
+        </div>
+        
+        <div class="stats" id="stats-container">
+            <h3>Attendance Statistics</h3>
+            <p>Total Students: <span id="total-students">0</span></p>
+            <p>Present: <span id="present-count">0</span> (<span id="present-percent">0%</span>)</p>
+            <p>Absent: <span id="absent-count">0</span> (<span id="absent-percent">0%</span>)</p>
+            <p>Late: <span id="late-count">0</span> (<span id="late-percent">0%</span>)</p>
+            <p>Half Day: <span id="halfday-count">0</span> (<span id="halfday-percent">0%</span>)</p>
+        </div>
+    </div>
+    
+    <!-- Edit Students Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Students</h2>
+            <div id="edit-form-container">
+                <!-- Edit form will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Your class attendance has been updated successfully!</div>
+    
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <script>
+        // Sample data - in a real app, this would come from a database
+        let studentsData = {
+            "II_CSE": [
+                { rollNo: "1", name: "John Doe" },
+                { rollNo: "2", name: "Jane Smith" },
+                { rollNo: "3", name: "Robert Johnson" },
+                { rollNo: "4", name: "Emily Davis" },
+                { rollNo: "5", name: "Michael Brown" }
+            ],
+            "III_CSE": [
+                { rollNo: "1", name: "Alice Williams" },
+                { rollNo: "2", name: "David Miller" },
+                { rollNo: "3", name: "Sarah Wilson" }
+            ],
+            "II_IT": [
+                { rollNo: "1", name: "James Taylor" },
+                { rollNo: "2", name: "Patricia Anderson" }
+            ],
+            "III_IT": [
+                { rollNo: "1", name: "Christopher Thomas" },
+                { rollNo: "2", name: "Linda Jackson" },
+                { rollNo: "3", name: "Daniel White" }
+            ],
+            "IV_CSE": [
+                { rollNo: "1", name: "Matthew Harris" },
+                { rollNo: "2", name: "Donna Martin" },
+                { rollNo: "3", name: "Anthony Thompson" },
+                { rollNo: "4", name: "Lisa Garcia" }
+            ]
+        };
+        
+        // Attendance records - date -> class -> rollNo -> status
+        let attendanceRecords = {};
+        
+        // DOM elements
+        const classSelect = document.getElementById('class-select');
+        const dateInput = document.getElementById('date-input');
+        const loadBtn = document.getElementById('load-btn');
+        const exportWeekBtn = document.getElementById('export-week-btn');
+        const exportSemesterBtn = document.getElementById('export-semester-btn');
+        const editStudentsBtn = document.getElementById('edit-students-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const studentList = document.getElementById('student-list');
+        const attendanceTable = document.getElementById('attendance-table');
+        const editModal = document.getElementById('edit-modal');
+        const closeModal = document.querySelector('.close');
+        const editFormContainer = document.getElementById('edit-form-container');
+        const toast = document.getElementById('toast');
+        
+        // Set today's date as default
+        dateInput.valueAsDate = new Date();
+        
+        // Load students for selected class and date
+        loadBtn.addEventListener('click', loadStudents);
+        
+        // Export buttons
+        exportWeekBtn.addEventListener('click', exportWeeklyReport);
+        exportSemesterBtn.addEventListener('click', exportSemesterReport);
+        
+        // Edit students
+        editStudentsBtn.addEventListener('click', openEditModal);
+        closeModal.addEventListener('click', () => editModal.style.display = 'none');
+        window.addEventListener('click', (event) => {
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+        
+        // Submit attendance
+        submitBtn.addEventListener('click', submitAttendance);
+        
+        // Initial load
+        loadStudents();
+        
+        function loadStudents() {
+            const selectedClass = classSelect.value;
+            const selectedDate = dateInput.value;
+            
+            // Create date record if it doesn't exist
+            if (!attendanceRecords[selectedDate]) {
+                attendanceRecords[selectedDate] = {};
+            }
+            if (!attendanceRecords[selectedDate][selectedClass]) {
+                attendanceRecords[selectedDate][selectedClass] = {};
+            }
+            
+            // Clear existing rows
+            studentList.innerHTML = '';
+            
+            // Add rows for each student
+            studentsData[selectedClass].forEach(student => {
+                const row = document.createElement('tr');
+                
+                // Roll No
+                const rollNoCell = document.createElement('td');
+                rollNoCell.textContent = student.rollNo;
+                row.appendChild(rollNoCell);
+                
+                // Name
+                const nameCell = document.createElement('td');
+                nameCell.textContent = student.name;
+                row.appendChild(nameCell);
+                
+                // Attendance options
+                const attendanceCell = document.createElement('td');
+                const attendanceOptions = document.createElement('div');
+                attendanceOptions.className = 'attendance-options';
+                
+                // Get existing status or default to 'present'
+                const currentStatus = attendanceRecords[selectedDate][selectedClass][student.rollNo] || 'present';
+                
+                // Present option
+                const presentOption = document.createElement('label');
+                presentOption.className = 'present-option';
+                const presentInput = document.createElement('input');
+                presentInput.type = 'radio';
+                presentInput.name = `attendance-${student.rollNo}`;
+                presentInput.value = 'present';
+                presentInput.checked = currentStatus === 'present';
+                presentOption.appendChild(presentInput);
+                presentOption.appendChild(document.createTextNode('Present'));
+                attendanceOptions.appendChild(presentOption);
+                
+                // Absent option
+                const absentOption = document.createElement('label');
+                absentOption.className = 'absent-option';
+                const absentInput = document.createElement('input');
+                absentInput.type = 'radio';
+                absentInput.name = `attendance-${student.rollNo}`;
+                absentInput.value = 'absent';
+                absentInput.checked = currentStatus === 'absent';
+                absentOption.appendChild(absentInput);
+                absentOption.appendChild(document.createTextNode('Absent'));
+                attendanceOptions.appendChild(absentOption);
+                
+                // Late option
+                const lateOption = document.createElement('label');
+                lateOption.className = 'late-option';
+                const lateInput = document.createElement('input');
+                lateInput.type = 'radio';
+                lateInput.name = `attendance-${student.rollNo}`;
+                lateInput.value = 'late';
+                lateInput.checked = currentStatus === 'late';
+                lateOption.appendChild(lateInput);
+                lateOption.appendChild(document.createTextNode('Late'));
+                attendanceOptions.appendChild(lateOption);
+                
+                // Half Day option
+                const halfDayOption = document.createElement('label');
+                halfDayOption.className = 'halfday-option';
+                const halfDayInput = document.createElement('input');
+                halfDayInput.type = 'radio';
+                halfDayInput.name = `attendance-${student.rollNo}`;
+                halfDayInput.value = 'halfday';
+                halfDayInput.checked = currentStatus === 'halfday';
+                halfDayOption.appendChild(halfDayInput);
+                halfDayOption.appendChild(document.createTextNode('Half Day'));
+                attendanceOptions.appendChild(halfDayOption);
+                
+                // Add change event to save status
+                [presentInput, absentInput, lateInput, halfDayInput].forEach(input => {
+                    input.addEventListener('change', () => {
+                        attendanceRecords[selectedDate][selectedClass][student.rollNo] = input.value;
+                        updateStats();
+                    });
+                });
+                
+                attendanceCell.appendChild(attendanceOptions);
+                row.appendChild(attendanceCell);
+                
+                studentList.appendChild(row);
+            });
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            const selectedClass = classSelect.value;
+            const selectedDate = dateInput.value;
+            
+            if (!studentsData[selectedClass] || !attendanceRecords[selectedDate] || !attendanceRecords[selectedDate][selectedClass]) {
+                return;
+            }
+            
+            const students = studentsData[selectedClass];
+            const totalStudents = students.length;
+            let presentCount = 0;
+            let absentCount = 0;
+            let lateCount = 0;
+            let halfDayCount = 0;
+            
+            students.forEach(student => {
+                const status = attendanceRecords[selectedDate][selectedClass][student.rollNo] || 'present';
+                
+                switch (status) {
+                    case 'present':
+                        presentCount++;
+                        break;
+                    case 'absent':
+                        absentCount++;
+                        break;
+                    case 'late':
+                        lateCount++;
+                        break;
+                    case 'halfday':
+                        halfDayCount++;
+                        break;
+                }
+            });
+            
+            document.getElementById('total-students').textContent = totalStudents;
+            document.getElementById('present-count').textContent = presentCount;
+            document.getElementById('absent-count').textContent = absentCount;
+            document.getElementById('late-count').textContent = lateCount;
+            document.getElementById('halfday-count').textContent = halfDayCount;
+            
+            document.getElementById('present-percent').textContent = Math.round((presentCount / totalStudents) * 100) + '%';
+            document.getElementById('absent-percent').textContent = Math.round((absentCount / totalStudents) * 100) + '%';
+            document.getElementById('late-percent').textContent = Math.round((lateCount / totalStudents) * 100) + '%';
+            document.getElementById('halfday-percent').textContent = Math.round((halfDayCount / totalStudents) * 100) + '%';
+        }
+        
+        function openEditModal() {
+            const selectedClass = classSelect.value;
+            editFormContainer.innerHTML = '';
+            
+            const form = document.createElement('form');
+            
+            // Add existing students
+            studentsData[selectedClass].forEach((student, index) => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = `Student ${index + 1}:`;
+                
+                const rollNoInput = document.createElement('input');
+                rollNoInput.type = 'text';
+                rollNoInput.value = student.rollNo;
+                rollNoInput.placeholder = 'Roll No';
+                rollNoInput.dataset.index = index;
+                rollNoInput.dataset.field = 'rollNo';
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.value = student.name;
+                nameInput.placeholder = 'Name';
+                nameInput.dataset.index = index;
+                nameInput.dataset.field = 'name';
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.dataset.index = index;
+                deleteBtn.addEventListener('click', function() {
+                    studentsData[selectedClass].splice(index, 1);
+                    openEditModal(); // Refresh the form
+                });
+                
+                group.appendChild(label);
+                group.appendChild(rollNoInput);
+                group.appendChild(nameInput);
+                group.appendChild(deleteBtn);
+                form.appendChild(group);
+            });
+            
+            // Add event listeners for changes
+            form.querySelectorAll('input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const index = this.dataset.index;
+                    const field = this.dataset.field;
+                    studentsData[selectedClass][index][field] = this.value;
+                });
+            });
+            
+            // Add button to add new student
+            const addBtn = document.createElement('button');
+            addBtn.type = 'button';
+            addBtn.textContent = 'Add Student';
+            addBtn.addEventListener('click', function() {
+                studentsData[selectedClass].push({ rollNo: '', name: '' });
+                openEditModal(); // Refresh the form
+            });
+            
+            // Add save button
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'button';
+            saveBtn.textContent = 'Save Changes';
+            saveBtn.className = 'save-btn';
+            saveBtn.addEventListener('click', function() {
+                editModal.style.display = 'none';
+                loadStudents(); // Refresh the student list
+            });
+            
+            form.appendChild(addBtn);
+            form.appendChild(saveBtn);
+            editFormContainer.appendChild(form);
+            
+            editModal.style.display = 'block';
+        }
+        
+        function submitAttendance() {
+            showToast();
+        }
+        
+        function showToast() {
+            toast.className = 'toast show';
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+        
+        function exportWeeklyReport() {
+            const selectedClass = classSelect.value;
+            const selectedDate = new Date(dateInput.value);
+            
+            // Calculate start of week (Monday)
+            const startOfWeek = new Date(selectedDate);
+            startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay() + 1);
+            
+            // Calculate end of week (Sunday)
+            const endOfWeek = new Date(selectedDate);
+            endOfWeek.setDate(selectedDate.getDate() + (7 - selectedDate.getDay()));
+            
+            // Collect all dates in this week
+            const datesInWeek = [];
+            const currentDate = new Date(startOfWeek);
+            
+            while (currentDate <= endOfWeek) {
+                datesInWeek.push(new Date(currentDate).toISOString().split('T')[0]);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            // Prepare data for export
+            const exportData = [];
+            
+            // Add header row
+            const headerRow = ['Roll No', 'Student Name'];
+            datesInWeek.forEach(date => {
+                headerRow.push(new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+            });
+            headerRow.push('Present Count', 'Total Days', 'Percentage');
+            exportData.push(headerRow);
+            
+            // Add student rows
+            studentsData[selectedClass].forEach(student => {
+                const row = [student.rollNo, student.name];
+                let presentCount = 0;
+                let totalDays = 0;
+                
+                datesInWeek.forEach(date => {
+                    if (attendanceRecords[date] && attendanceRecords[date][selectedClass] && attendanceRecords[date][selectedClass][student.rollNo]) {
+                        const status = attendanceRecords[date][selectedClass][student.rollNo];
+                        row.push(status.charAt(0).toUpperCase() + status.slice(1)); // Capitalize first letter
+                        
+                        if (status === 'present' || status === 'late' || status === 'halfday') {
+                            presentCount++;
+                        }
+                        totalDays++;
+                    } else {
+                        row.push('');
+                    }
+                });
+                
+                const percentage = totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 0;
+                row.push(presentCount, totalDays, percentage + '%');
+                exportData.push(row);
+            });
+            
+            // Create workbook and export
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            XLSX.utils.book_append_sheet(wb, ws, "Weekly Report");
+            XLSX.writeFile(wb, `${selectedClass}_Weekly_Report_${startOfWeek.toISOString().split('T')[0]}_to_${endOfWeek.toISOString().split('T')[0]}.xlsx`);
+        }
+        
+        function exportSemesterReport() {
+            const selectedClass = classSelect.value;
+            
+            // Get all dates with attendance records for this class
+            const allDates = [];
+            for (const date in attendanceRecords) {
+                if (attendanceRecords[date][selectedClass]) {
+                    allDates.push(date);
+                }
+            }
+            
+            // Sort dates chronologically
+            allDates.sort((a, b) => new Date(a) - new Date(b));
+            
+            // Prepare data for export
+            const exportData = [];
+            
+            // Add header row
+            const headerRow = ['Roll No', 'Student Name'];
+            allDates.forEach(date => {
+                headerRow.push(new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
+            });
+            headerRow.push('Present Count', 'Total Days', 'Percentage');
+            exportData.push(headerRow);
+            
+            // Add student rows
+            studentsData[selectedClass].forEach(student => {
+                const row = [student.rollNo, student.name];
+                let presentCount = 0;
+                let totalDays = 0;
+                
+                allDates.forEach(date => {
+                    if (attendanceRecords[date][selectedClass][student.rollNo]) {
+                        const status = attendanceRecords[date][selectedClass][student.rollNo];
+                        row.push(status.charAt(0).toUpperCase() + status.slice(1)); // Capitalize first letter
+                        
+                        if (status === 'present' || status === 'late' || status === 'halfday') {
+                            presentCount++;
+                        }
+                        totalDays++;
+                    } else {
+                        row.push('');
+                    }
+                });
+                
+                const percentage = totalDays > 0 ? Math.round((presentCount / totalDays) * 100) : 0;
+                row.push(presentCount, totalDays, percentage + '%');
+                exportData.push(row);
+            });
+            
+            // Create workbook and export
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(exportData);
+            XLSX.utils.book_append_sheet(wb, ws, "Semester Report");
+            XLSX.writeFile(wb, `${selectedClass}_Semester_Report.xlsx`);
+        }
+    </script>
+</body>
+</html>
